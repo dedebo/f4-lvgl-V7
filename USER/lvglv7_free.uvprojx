@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>TOUCH</TargetName>
+      <TargetName>LVGL_V7</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -47,7 +47,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>..\OBJ\</OutputDirectory>
-          <OutputName>TOUCH</OutputName>
+          <OutputName>LVGL_V7</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>1</CreateHexFile>
@@ -365,7 +365,7 @@
               <MiscControls>--diag_suppress=68  --diag_suppress=111  --diag_suppress=550</MiscControls>
               <Define>STM32F40_41xxx,USE_STDPERIPH_DRIVER</Define>
               <Undefine></Undefine>
-              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\FWLIB\inc;..\HARDWARE\TOUCH;..\HARDWARE\MY_LCD;..\HARDWARE\TIM3;..\HARDWARE\W25Q128;..\HARDWARE\SRAM;..\GUI;..\GUI_APP;..\GUI\lvgl;..\GUI\lvgl_driver</IncludePath>
+              <IncludePath>..\CORE;..\SYSTEM\delay;..\SYSTEM\sys;..\SYSTEM\usart;..\USER;..\HARDWARE\LED;..\HARDWARE\KEY;..\HARDWARE\IIC;..\HARDWARE\24CXX;..\FWLIB\inc;..\HARDWARE\TOUCH;..\HARDWARE\MY_LCD;..\HARDWARE\TIM3;..\HARDWARE\W25Q128;..\HARDWARE\SRAM;..\FREERTOS\include;..\FREERTOS\portable\RVDS\ARM_CM4F;..\FREERTOS;..\GUI;..\GUI_APP;..\GUI\lvgl;..\GUI\lvgl_driver;..\GUI_APP\my_control;..\MALLOC;..\HARDWARE\SDIO;..\FTAFS</IncludePath>
             </VariousControls>
           </Cads>
           <Aads>
@@ -426,6 +426,86 @@
           </Files>
         </Group>
         <Group>
+          <GroupName>CORE</GroupName>
+          <Files>
+            <File>
+              <FileName>startup_stm32f40_41xxx.s</FileName>
+              <FileType>2</FileType>
+              <FilePath>..\CORE\startup_stm32f40_41xxx.s</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FWLIB</GroupName>
+          <Files>
+            <File>
+              <FileName>misc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\misc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_gpio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_gpio.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_fsmc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_fsmc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_rcc.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_rcc.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_syscfg.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_syscfg.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_usart.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_tim.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_dma.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_dma.c</FilePath>
+            </File>
+            <File>
+              <FileName>stm32f4xx_sdio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FWLIB\src\stm32f4xx_sdio.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>SYSTEM</GroupName>
+          <Files>
+            <File>
+              <FileName>delay.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\delay\delay.c</FilePath>
+            </File>
+            <File>
+              <FileName>sys.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\sys\sys.c</FilePath>
+            </File>
+            <File>
+              <FileName>usart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\SYSTEM\usart\usart.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
           <GroupName>HARDWARE</GroupName>
           <Files>
             <File>
@@ -473,75 +553,20 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\SRAM\extend_sram.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>SYSTEM</GroupName>
-          <Files>
             <File>
-              <FileName>delay.c</FileName>
+              <FileName>sdio_sdcard.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\SYSTEM\delay\delay.c</FilePath>
-            </File>
-            <File>
-              <FileName>sys.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\sys\sys.c</FilePath>
-            </File>
-            <File>
-              <FileName>usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\SYSTEM\usart\usart.c</FilePath>
+              <FilePath>..\HARDWARE\SDIO\sdio_sdcard.c</FilePath>
             </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>CORE</GroupName>
+          <GroupName>MALLOC</GroupName>
           <Files>
             <File>
-              <FileName>startup_stm32f40_41xxx.s</FileName>
-              <FileType>2</FileType>
-              <FilePath>..\CORE\startup_stm32f40_41xxx.s</FilePath>
-            </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>FWLIB</GroupName>
-          <Files>
-            <File>
-              <FileName>misc.c</FileName>
+              <FileName>malloc.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\misc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_gpio.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\stm32f4xx_gpio.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_fsmc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\stm32f4xx_fsmc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_rcc.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\stm32f4xx_rcc.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_syscfg.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\stm32f4xx_syscfg.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_usart.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\stm32f4xx_usart.c</FilePath>
-            </File>
-            <File>
-              <FileName>stm32f4xx_tim.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\FWLIB\src\stm32f4xx_tim.c</FilePath>
+              <FilePath>..\MALLOC\malloc.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1123,15 +1148,85 @@
               <FileType>1</FileType>
               <FilePath>..\GUI\lvgl_driver\lv_port_indev.c</FilePath>
             </File>
+            <File>
+              <FileName>lv_port_fs.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI\lvgl_driver\lv_port_fs.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>GUI_APP</GroupName>
           <Files>
             <File>
-              <FileName>label_test.c</FileName>
+              <FileName>my_control.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\GUI_APP\label_test\label_test.c</FilePath>
+              <FilePath>..\GUI_APP\my_control\my_control.c</FilePath>
+            </File>
+            <File>
+              <FileName>LED_ICON.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\GUI_APP\my_control\LED_ICON.c</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FREERTOS_CORE</GroupName>
+          <Files>
+            <File>
+              <FileName>croutine.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\croutine.c</FilePath>
+            </File>
+            <File>
+              <FileName>event_groups.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\event_groups.c</FilePath>
+            </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\list.c</FilePath>
+            </File>
+            <File>
+              <FileName>myEXTEND.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\myEXTEND.c</FilePath>
+            </File>
+            <File>
+              <FileName>queue.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\queue.c</FilePath>
+            </File>
+            <File>
+              <FileName>tasks.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\tasks.c</FilePath>
+            </File>
+            <File>
+              <FileName>timers.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\timers.c</FilePath>
+            </File>
+            <File>
+              <FileName>FreeRTOSConfig.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\FREERTOS\include\FreeRTOSConfig.h</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FREERTOS_PORT</GroupName>
+          <Files>
+            <File>
+              <FileName>heap_4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\portable\MemMang\heap_4.c</FilePath>
+            </File>
+            <File>
+              <FileName>port.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FREERTOS\portable\RVDS\ARM_CM4F\port.c</FilePath>
             </File>
           </Files>
         </Group>
@@ -1142,6 +1237,36 @@
               <FileName>readme.txt</FileName>
               <FileType>5</FileType>
               <FilePath>..\readme.txt</FilePath>
+            </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>FATFS</GroupName>
+          <Files>
+            <File>
+              <FileName>diskio.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FTAFS\diskio.c</FilePath>
+            </File>
+            <File>
+              <FileName>ff.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FTAFS\ff.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffsystem.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FTAFS\ffsystem.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffunicode.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\FTAFS\ffunicode.c</FilePath>
+            </File>
+            <File>
+              <FileName>ffconf.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\FTAFS\ffconf.h</FilePath>
             </File>
           </Files>
         </Group>

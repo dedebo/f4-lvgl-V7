@@ -62,7 +62,7 @@ ARM Macro Assembler    Page 1
    38 00000000         ;   <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
    39 00000000         ; </h>
    40 00000000         
-   41 00000000 00000800 
+   41 00000000 00000B00 
 
 
 
@@ -70,24 +70,24 @@ ARM Macro Assembler    Page 2
 
 
                        Stack_Size
-                               EQU              0x00000800
+                               EQU              0x00000b00
    42 00000000         
    43 00000000                 AREA             STACK, NOINIT, READWRITE, ALIGN
 =3
    44 00000000         Stack_Mem
                                SPACE            Stack_Size
-   45 00000800         __initial_sp
-   46 00000800         
-   47 00000800         
-   48 00000800         ; <h> Heap Configuration
-   49 00000800         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
-   50 00000800         ; </h>
-   51 00000800         
-   52 00000800 00000200 
+   45 00000B00         __initial_sp
+   46 00000B00         
+   47 00000B00         
+   48 00000B00         ; <h> Heap Configuration
+   49 00000B00         ;   <o>  Heap Size (in Bytes) <0x0-0xFFFFFFFF:8>
+   50 00000B00         ; </h>
+   51 00000B00         
+   52 00000B00 00000200 
                        Heap_Size
                                EQU              0x00000200
-   53 00000800         
-   54 00000800                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
+   53 00000B00         
+   54 00000B00                 AREA             HEAP, NOINIT, READWRITE, ALIGN=
 3
    55 00000000         __heap_base
    56 00000000         Heap_Mem
@@ -864,15 +864,15 @@ ARM Macro Assembler    Page 14
               00000000 
               00000000 
               00000000 
-              00000800 
+              00000B00 
               00000200 
               00000000 
 Command Line: --debug --xref --diag_suppress=9931 --cpu=Cortex-M4.fp --apcs=int
 erwork --depend=..\obj\startup_stm32f40_41xxx.d -o..\obj\startup_stm32f40_41xxx
-.o -IC:\Users\HP-PC\Desktop\test\USER\RTE -ID:\Keil_v5\ARM\PACK\Keil\STM32F4xx_
-DFP\1.0.8\Device\Include -ID:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION_
-VERSION SETA 514" --predefine="STM32F40_41xxx SETA 1" --list=..\obj\startup_stm
-32f40_41xxx.lst ..\CORE\startup_stm32f40_41xxx.s
+.o -ID:\GIT\¹¤×÷Çø\f4-lvgl-V7\USER\RTE -ID:\Keil_v5\ARM\PACK\Keil\STM32F4xx_DFP
+\1.0.8\Device\Include -ID:\Keil_v5\ARM\CMSIS\Include --predefine="__UVISION_VER
+SION SETA 514" --predefine="STM32F40_41xxx SETA 1" --list=..\obj\startup_stm32f
+40_41xxx.lst ..\CORE\startup_stm32f40_41xxx.s
 
 
 
@@ -896,7 +896,7 @@ Symbol: Stack_Mem
       At line 423 in file ..\CORE\startup_stm32f40_41xxx.s
       At line 425 in file ..\CORE\startup_stm32f40_41xxx.s
 
-__initial_sp 00000800
+__initial_sp 00000B00
 
 Symbol: __initial_sp
    Definitions
@@ -1936,7 +1936,7 @@ Symbol: Heap_Size
       At line 56 in file ..\CORE\startup_stm32f40_41xxx.s
       At line 424 in file ..\CORE\startup_stm32f40_41xxx.s
 
-Stack_Size 00000800
+Stack_Size 00000B00
 
 Symbol: Stack_Size
    Definitions

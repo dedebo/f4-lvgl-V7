@@ -4,13 +4,14 @@
  */
 
  /*Copy this file as "lv_port_fs.c" and set this value to "1" to enable content*/
-#if 0
+#if 1
 
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_port_fs_template.h"
-
+#include "lv_port_fs.h"
+#include "ff.h"
+#include "usart.h"
 /*********************
  *      DEFINES
  *********************/
@@ -23,19 +24,22 @@
  * If you are using a File System library
  * it already should have a File type.
  * For example FatFS has `FIL`. In this case use `typedef FIL file_t`*/
-typedef struct {
-    /*Add the data you need to store about a file*/
-    uint32_t dummy1;
-    uint32_t dummy2;
-}file_t;
+//typedef struct {
+//    /*Add the data you need to store about a file*/
+//    uint32_t dummy1;
+//    uint32_t dummy2;
+//}file_t;
 
 /*Similarly to `file_t` create a type for directory reading too */
-typedef struct {
-    /*Add the data you need to store about directory reading*/
-    uint32_t dummy1;
-    uint32_t dummy2;
-}dir_t;
+//typedef struct {
+//    /*Add the data you need to store about directory reading*/
+//    uint32_t dummy1;
+//    uint32_t dummy2;
+//}dir_t;
 
+
+typedef FIL file_t;		// 把FIL类型定义成file_t
+typedef DIR dir_t; 		// 把DIR类型定义成dir_t
 /**********************
  *  STATIC PROTOTYPES
  **********************/
@@ -89,7 +93,7 @@ void lv_port_fs_init(void)
 
     /*Set up fields...*/
     fs_drv.file_size = sizeof(file_t);
-    fs_drv.letter = 'P';
+    fs_drv.letter = 'S';
     fs_drv.open_cb = fs_open;
     fs_drv.close_cb = fs_close;
     fs_drv.read_cb = fs_read;
@@ -117,8 +121,9 @@ void lv_port_fs_init(void)
 /* Initialize your Storage device and File system. */
 static void fs_init(void)
 {
+	static FATFS fs1;
     /*E.g. for FatFS initialize the SD card and FatFS itself*/
-
+	f_mount(&fs1,"SD:",1);	//Register/Unregister the work area of the volume
     /*You code here*/
 }
 
@@ -134,24 +139,44 @@ static lv_fs_res_t fs_open (lv_fs_drv_t * drv, void * file_p, const char * path,
 {
     lv_fs_res_t res = LV_FS_RES_NOT_IMP;
 
-    if(mode == LV_FS_MODE_WR)
-    {
-        /*Open a file for write*/
+	char *path_buf = NULL;
+  	uint8_t opt_mode = 0;
+	uint16_t path_len = strlen(path);
+	
+  	// 根据传入的letter判断是什么存储设备
+  	switch (drv->letter) {
+  	case 'S':       // SD card
+  		path_buf = (char *)lv_mem_alloc(sizeof(char) * (path_len + 4));
+    	sprintf(path_buf, "SD:/%s", path);
+    	break;
+  	case 'F':       // SPI FALSH
+  		path_buf = (char *)lv_mem_alloc(sizeof(char) * (path_len + 6));
+    	sprintf(path_buf, "SPIF:/%s", path);
+    	break;
+  	default:
+    	printf("No drive %c\n", drv->letter);
+    	return LV_FS_RES_NOT_EX;
+  	}
 
-        /* Add your code here*/
+	
+   /* 文件操作方法，将FatFS的转换成LVGL的操作方法 */
+    if(mode == LV_FS_MODE_WR) {
+    	opt_mode = FA_OPEN_ALWAYS | FA_WRITE;
+    } else if(mode == LV_FS_MODE_RD) {
+    	opt_mode = FA_OPEN_EXISTING | FA_READ;
+    } else if(mode == (LV_FS_MODE_WR | LV_FS_MODE_RD)) {
+		opt_mode = FA_WRITE | FA_READ;
     }
-    else if(mode == LV_FS_MODE_RD)
-    {
-        /*Open a file for read*/
 
-        /* Add your code here*/
-    }
-    else if(mode == (LV_FS_MODE_WR | LV_FS_MODE_RD))
-    {
-        /*Open a file for read and write*/
-
-        /* Add your code here*/
-    }
+	/* 调用FatFs的函数 */
+  	FRESULT fres = f_open((FIL*)file_p, path_buf, opt_mode);
+	if (fres != FR_OK) {
+    	printf("f_open error (%d)\n", fres);
+    	res = LV_FS_RES_NOT_IMP;
+  	} else
+    	res = LV_FS_RES_OK;
+	
+	lv_mem_free(path_buf);
 
     return res;
 }
@@ -165,11 +190,12 @@ static lv_fs_res_t fs_open (lv_fs_drv_t * drv, void * file_p, const char * path,
  */
 static lv_fs_res_t fs_close (lv_fs_drv_t * drv, void * file_p)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
+    
 
-    /* Add your code here*/
-
-    return res;
+    if (f_close((FIL*)file_p) != FR_OK)
+    	return LV_FS_RES_UNKNOWN;
+  	else
+    	return LV_FS_RES_OK;
 }
 
 /**
@@ -184,11 +210,15 @@ static lv_fs_res_t fs_close (lv_fs_drv_t * drv, void * file_p)
  */
 static lv_fs_res_t fs_read (lv_fs_drv_t * drv, void * file_p, void * buf, uint32_t btr, uint32_t * br)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FRESULT fres = f_read((FIL*)file_p,buf,btr,br);
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_READ_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -202,11 +232,15 @@ static lv_fs_res_t fs_read (lv_fs_drv_t * drv, void * file_p, void * buf, uint32
  */
 static lv_fs_res_t fs_write(lv_fs_drv_t * drv, void * file_p, const void * buf, uint32_t btw, uint32_t * bw)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+    FRESULT fres = f_write((FIL*)file_p,buf,btw,bw);
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_WRITE_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -219,11 +253,15 @@ static lv_fs_res_t fs_write(lv_fs_drv_t * drv, void * file_p, const void * buf, 
  */
 static lv_fs_res_t fs_seek (lv_fs_drv_t * drv, void * file_p, uint32_t pos)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+  	FRESULT fres = f_lseek((FIL*)file_p,pos);
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_LSEEK_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -235,11 +273,17 @@ static lv_fs_res_t fs_seek (lv_fs_drv_t * drv, void * file_p, uint32_t pos)
  */
 static lv_fs_res_t fs_size (lv_fs_drv_t * drv, void * file_p, uint32_t * size_p)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FSIZE_t t = f_size ((FIL*)file_p);
+	*size_p = t;
+	if(t==0){
+		printf("size is 0");
+		return LV_FS_RES_OK;
+	}
+	else
+	{
+		return LV_FS_RES_OK;
+	}
+	
 }
 /**
  * Give the position of the read write pointer
@@ -251,11 +295,10 @@ static lv_fs_res_t fs_size (lv_fs_drv_t * drv, void * file_p, uint32_t * size_p)
  */
 static lv_fs_res_t fs_tell (lv_fs_drv_t * drv, void * file_p, uint32_t * pos_p)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FSIZE_t t = f_tell((FIL*)file_p);
+	*pos_p = t;
+	
+	return LV_FS_RES_OK;
 }
 
 /**
@@ -266,11 +309,15 @@ static lv_fs_res_t fs_tell (lv_fs_drv_t * drv, void * file_p, uint32_t * pos_p)
  */
 static lv_fs_res_t fs_remove (lv_fs_drv_t * drv, const char *path)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FRESULT fres = f_unlink ( (TCHAR*) path  );
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_REMOVE_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -282,11 +329,9 @@ static lv_fs_res_t fs_remove (lv_fs_drv_t * drv, const char *path)
  */
 static lv_fs_res_t fs_trunc (lv_fs_drv_t * drv, void * file_p)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+    FRESULT t = f_truncate ((FIL*) file_p );
+	
+	return LV_FS_RES_OK;
 }
 
 /**
@@ -298,11 +343,15 @@ static lv_fs_res_t fs_trunc (lv_fs_drv_t * drv, void * file_p)
  */
 static lv_fs_res_t fs_rename (lv_fs_drv_t * drv, const char * oldname, const char * newname)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FRESULT fres = f_rename (  oldname,newname  );
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_RENAME_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -331,11 +380,15 @@ static lv_fs_res_t fs_free (lv_fs_drv_t * drv, uint32_t * total_p, uint32_t * fr
  */
 static lv_fs_res_t fs_dir_open (lv_fs_drv_t * drv, void * rddir_p, const char *path)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FRESULT fres = f_opendir ((DIR*)rddir_p , (TCHAR*) path  );
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_OPENDIR_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -348,11 +401,17 @@ static lv_fs_res_t fs_dir_open (lv_fs_drv_t * drv, void * rddir_p, const char *p
  */
 static lv_fs_res_t fs_dir_read (lv_fs_drv_t * drv, void * rddir_p, char *fn)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FILINFO fno ; 
+	FRESULT fres=f_readdir ((DIR*)rddir_p,&fno);
+	strcpy(fn,(char*)fno.fsize);
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_READDIR_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 /**
@@ -363,11 +422,15 @@ static lv_fs_res_t fs_dir_read (lv_fs_drv_t * drv, void * rddir_p, char *fn)
  */
 static lv_fs_res_t fs_dir_close (lv_fs_drv_t * drv, void * rddir_p)
 {
-    lv_fs_res_t res = LV_FS_RES_NOT_IMP;
-
-    /* Add your code here*/
-
-    return res;
+	FRESULT fres = f_closedir((DIR*)rddir_p);
+	if(fres == FR_OK)
+	{
+		return LV_FS_RES_OK;
+	}
+	else{
+		printf("FS_CLOSEDIR_ERROR");
+		return LV_FS_RES_UNKNOWN;//显示出错
+	}
 }
 
 #else /* Enable this file at the top */

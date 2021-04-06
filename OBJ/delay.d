@@ -36,3 +36,16 @@
 ..\obj\delay.o: ..\FWLIB\inc\stm32f4xx_dac.h
 ..\obj\delay.o: ..\FWLIB\inc\stm32f4xx_dcmi.h
 ..\obj\delay.o: ..\FWLIB\inc\stm32f4xx_fsmc.h
+..\obj\delay.o: ..\FREERTOS\include\FreeRTOS.h
+..\obj\delay.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stddef.h
+..\obj\delay.o: ..\FREERTOS\include\FreeRTOSConfig.h
+..\obj\delay.o: ..\SYSTEM\usart\usart.h
+..\obj\delay.o: D:\Keil_v5\ARM\ARMCC\Bin\..\include\stdio.h
+..\obj\delay.o: ..\FREERTOS\myEXTEND.h
+..\obj\delay.o: ..\FREERTOS\include\projdefs.h
+..\obj\delay.o: ..\FREERTOS\include\portable.h
+..\obj\delay.o: ..\FREERTOS\include\deprecated_definitions.h
+..\obj\delay.o: ..\FREERTOS\portable\RVDS\ARM_CM4F\portmacro.h
+..\obj\delay.o: ..\FREERTOS\include\mpu_wrappers.h
+..\obj\delay.o: ..\FREERTOS\include\task.h
+..\obj\delay.o: ..\FREERTOS\include\list.h

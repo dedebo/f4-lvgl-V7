@@ -41,7 +41,7 @@ void TIM3_IRQHandler(void)
 	if(TIM_GetITStatus(TIM3,TIM_IT_Update)==SET)
 	{
 		
-		lv_tick_inc(1);	//一毫秒
+		lv_tick_inc(1);	//一毫秒,为lvgl使用
 	}
 	
 	TIM_ClearITPendingBit(TIM3,TIM_IT_Update);
